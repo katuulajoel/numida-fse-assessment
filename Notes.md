@@ -24,4 +24,8 @@ Tried a schema introspection query to see the available fields:
 }
 ```
 And saw that we have `laons` and that `existingLoans` is not A valid fieldname
-Also Field 
+
+
+move ^ from packages so as to local the dependencies
+
+i need a logo with just the bird and not bird and company name for the favicon 
