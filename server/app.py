@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_graphql import GraphQLView
 from flask_cors import CORS
 import graphene
@@ -99,6 +99,48 @@ app.add_url_rule(
 @app.route("/")
 def home():
     return "Welcome to the Loan Application API"
+
+
+# REST endpoint to add a new payment
+@app.route("/api/payments", methods=["POST"])
+def add_payment():
+    try:
+        data = request.get_json()
+        
+        if not data or 'loanId' not in data or 'paymentAmount' not in data:
+            return jsonify({"error": "Missing required fields"}), 400
+        
+        loan_id = int(data['loanId'])
+        payment_amount = float(data['paymentAmount'])
+        
+        # Validate loan exists
+        loan_exists = any(loan["id"] == loan_id for loan in loans)
+        if not loan_exists:
+            return jsonify({"error": f"Loan with ID {loan_id} not found"}), 404
+        
+        # Create new payment
+        new_payment_id = max(payment["id"] for payment in loan_payments) + 1
+        new_payment = {
+            "id": new_payment_id,
+            "loan_id": loan_id,
+            "payment_date": datetime.date.today(),
+            "amount": payment_amount
+        }
+        
+        loan_payments.append(new_payment)
+        
+        return jsonify({
+            "success": True,
+            "payment": {
+                "id": new_payment["id"],
+                "loanId": new_payment["loan_id"],
+                "paymentDate": new_payment["payment_date"].isoformat(),
+                "amount": new_payment["amount"]
+            }
+        }), 201
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
