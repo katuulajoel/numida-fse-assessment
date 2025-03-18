@@ -1,18 +1,88 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 interface AddNewPaymentProps {
   formData: { loanId: string; paymentAmount: string }
   setFormData: React.Dispatch<React.SetStateAction<{ loanId: string; paymentAmount: string }>>
   handleSubmit: (e: React.FormEvent) => void
+  refetchLoans: () => void
 }
 
-const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, handleSubmit }) => {
+const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, handleSubmit, refetchLoans }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const submitPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Reset states
+    setError(null);
+    setSuccess(null);
+    
+    // Form validation
+    if (!formData.loanId.trim()) {
+      setError("Loan ID is required");
+      return;
+    }
+    
+    if (!formData.paymentAmount.trim() || parseFloat(formData.paymentAmount) <= 0) {
+      setError("Please enter a valid payment amount");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('http://localhost:2024/api/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          loanId: formData.loanId,
+          paymentAmount: formData.paymentAmount,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to add payment');
+      }
+      
+      // Success handling
+      setSuccess(`Payment of $${formData.paymentAmount} added successfully!`);
+      setFormData({ loanId: '', paymentAmount: '' });
+      
+      // Refresh loan data
+      refetchLoans();
+      
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while submitting the payment');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm sticky top-8">
       <div className="px-6 py-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800">Add New Payment</h2>
       </div>
-      <form onSubmit={handleSubmit} className="px-6 py-4 space-y-6">
+      
+      {error && (
+        <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+      
+      {success && (
+        <div className="mx-6 mt-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded">
+          {success}
+        </div>
+      )}
+      
+      <form onSubmit={submitPayment} className="px-6 py-4 space-y-6">
         <div>
           <label htmlFor="loanId" className="block text-sm font-medium text-gray-700">
             Loan ID
@@ -25,6 +95,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, ha
               onChange={(e) => setFormData({ ...formData, loanId: e.target.value })}
               className="w-full p-2 border rounded"
               placeholder="Enter Loan ID"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -46,6 +117,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, ha
               placeholder="0.00"
               min="0"
               step="0.01"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -53,9 +125,18 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, ha
         <div>
           <button
             type="submit"
-            className="w-full p-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            className="w-full p-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 flex justify-center items-center"
+            disabled={isLoading}
           >
-            Add Payment
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing...
+              </>
+            ) : 'Add Payment'}
           </button>
         </div>
       </form>

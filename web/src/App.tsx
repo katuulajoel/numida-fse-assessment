@@ -84,7 +84,7 @@ const formatDate = (dateString: string | null | undefined): string | undefined =
 };
 
 function LoanApp() {
-  const { loading, error, data } = useQuery(GET_LOANS_AND_PAYMENTS);
+  const { loading, error, data, refetch } = useQuery(GET_LOANS_AND_PAYMENTS);
   const [loans, setLoans] = useState<Loan[]>([]);
   const [formData, setFormData] = useState({
     loanId: '',
@@ -130,8 +130,26 @@ function LoanApp() {
     setFormData({ loanId: '', paymentAmount: '' })
   }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="min-h-screen p-8">
+      <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
+        <p className="font-bold">Error</p>
+        <p>{error.message}</p>
+        <button 
+          onClick={() => refetch()} 
+          className="mt-2 bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -143,7 +161,12 @@ function LoanApp() {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
-            <AddNewPayment formData={formData} setFormData={setFormData} handleSubmit={handleSubmit} />
+            <AddNewPayment 
+              formData={formData} 
+              setFormData={setFormData} 
+              handleSubmit={handleSubmit} 
+              refetchLoans={refetch}
+            />
           </div>
           <div className="lg:col-span-2">
             <LoanList loans={loans} getStatusColor={getStatusColor} />
