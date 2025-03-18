@@ -1,12 +1,50 @@
 import './App.css'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import AddNewPayment from './components/AddNewPayment'
 import LoanList from './components/LoanList'
 // Import the logo from assets
 import numidaLogo from './assets/logo.numida.png'
+import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
+
+// GraphQL client setup
+const client = new ApolloClient({
+  uri: 'http://localhost:2024/graphql',
+  cache: new InMemoryCache()
+});
+
+// GraphQL query for loans and payments
+const GET_LOANS_AND_PAYMENTS = gql`
+  query GetLoansAndPayments {
+    loans {
+      id
+      name
+      interestRate
+      principal
+      dueDate
+      payments {
+        id
+        paymentDate
+      }
+    }
+  }
+`;
 
 // Types
 type LoanStatus = 'On Time' | 'Late' | 'Defaulted' | 'Unpaid'
+
+interface Payment {
+  id: number;
+  payment_date: string;
+}
+
+interface LoanData {
+  id: number;
+  name: string;
+  interest_rate: number;
+  principal: number;
+  due_date: string;
+  payments: Payment[];
+}
 
 interface Loan {
   id: string
@@ -18,39 +56,64 @@ interface Loan {
   status: LoanStatus
 }
 
-function App() {
-  const [loans] = useState<Loan[]>([
-    {
-      id: '1',
-      name: 'Home Loan',
-      principal: 250000,
-      interestRate: 3.5,
-      dueDate: '2021-10-01',
-      status: 'On Time',
-    },
-    {
-      id: '2',
-      name: 'Auto Loan',
-      principal: 35000,
-      interestRate: 5.25,
-      dueDate: '2021-09-15',
-      paymentDate: '2021-09-20',
-      status: 'Late',
-    },
-    {
-      id: '3',
-      name: 'Personal Loan',
-      principal: 15000,
-      interestRate: 7.0,
-      dueDate: '2021-09-30',
-      status: 'Unpaid',
-    }
-  ])
+// Function to determine loan status based on due date and payment date
+const calculateLoanStatus = (dueDate: string, paymentDate?: string): LoanStatus => {
+  if (!paymentDate) return 'Unpaid';
+  
+  const due = new Date(dueDate);
+  const payment = new Date(paymentDate);
+  const diffDays = Math.floor((payment.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays <= 5) return 'On Time';
+  if (diffDays <= 30) return 'Late';
+  return 'Defaulted';
+};
 
+// Function to safely format dates
+const formatDate = (dateString: string | null | undefined): string | undefined => {
+  if (!dateString) return undefined;
+  try {
+    const date = new Date(dateString);
+    // Check if date is valid
+    if (isNaN(date.getTime())) return undefined;
+    return date.toISOString().split('T')[0];
+  } catch (e) {
+    console.error("Error formatting date:", e);
+    return undefined;
+  }
+};
+
+function LoanApp() {
+  const { loading, error, data } = useQuery(GET_LOANS_AND_PAYMENTS);
+  const [loans, setLoans] = useState<Loan[]>([]);
   const [formData, setFormData] = useState({
     loanId: '',
     paymentAmount: '',
-  })
+  });
+
+  useEffect(() => {
+    if (data?.loans) {
+      const processedLoans: Loan[] = data.loans.map((loan: any) => {
+        let paymentDate;
+        if (loan.payments && loan.payments.length > 0) {
+          paymentDate = loan.payments[0].paymentDate;
+        }
+        
+        const dueDate = loan.dueDate || '';
+        
+        return {
+          id: String(loan.id),
+          name: loan.name,
+          principal: loan.principal,
+          interestRate: loan.interestRate,
+          dueDate,
+          paymentDate,
+          status: calculateLoanStatus(dueDate, paymentDate)
+        };
+      });
+      setLoans(processedLoans);
+    }
+  }, [data]);
 
   const getStatusColor = (status: LoanStatus): string => {
     const colors = {
@@ -66,6 +129,9 @@ function App() {
     e.preventDefault()
     setFormData({ loanId: '', paymentAmount: '' })
   }
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -86,6 +152,14 @@ function App() {
       </div>
     </div>
   )
+}
+
+function App() {
+  return (
+    <ApolloProvider client={client}>
+      <LoanApp />
+    </ApolloProvider>
+  );
 }
 
 export default App
