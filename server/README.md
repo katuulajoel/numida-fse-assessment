@@ -28,7 +28,7 @@ To get all existing loans:
 
 ```graphql
 {
-  existingLoans {
+  loans {
     id
     name
     interestRate
