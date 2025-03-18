@@ -50,6 +50,7 @@ class ExistingLoans(graphene.ObjectType):
     name = graphene.String()
     interest_rate = graphene.Float()
     principal = graphene.Int()
+    due_date = graphene.Date()
 
 
 class Query(graphene.ObjectType):
