@@ -1,18 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import './index.css'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
+import './index.css'
+import numidaLogo from './assets/logo.numida.png'
 
-const client = new ApolloClient({
-  uri: "http://localhost:2024/graphql",
-  cache: new InMemoryCache(),
-});
+// Set favicon dynamically
+const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+if (link) {
+  link.href = numidaLogo;
+}
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 )
