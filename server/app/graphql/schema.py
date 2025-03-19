@@ -1,5 +1,5 @@
 import graphene
-from ..models.data import get_loans, get_payments_by_loan_id
+from ..models.data import get_loans, get_payments_by_loan_id, get_payments
 
 class LoanPayment(graphene.ObjectType):
     id = graphene.Int()
@@ -40,7 +40,6 @@ class Query(graphene.ObjectType):
         ]
     
     def resolve_loan_payments(self, info):
-        from ..models.data import get_payments
         return get_payments()
 
 schema = graphene.Schema(query=Query)
