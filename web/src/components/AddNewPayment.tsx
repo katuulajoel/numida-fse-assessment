@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from '../i18n/useTranslation'
 
 interface AddNewPaymentProps {
   formData: { loanId: string; paymentAmount: string }
@@ -7,6 +8,7 @@ interface AddNewPaymentProps {
 }
 
 const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, refetchLoans }) => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -20,12 +22,12 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
     
     // Form validation
     if (!formData.loanId.trim()) {
-      setError("Loan ID is required");
+      setError(t('loanDashboard.paymentForm.errors.loanIdRequired'));
       return;
     }
     
     if (!formData.paymentAmount.trim() || parseFloat(formData.paymentAmount) <= 0) {
-      setError("Please enter a valid payment amount");
+      setError(t('loanDashboard.paymentForm.errors.invalidAmount'));
       return;
     }
     
@@ -46,18 +48,21 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to add payment');
+        throw new Error(data.error || t('loanDashboard.paymentForm.errors.genericError'));
       }
       
       // Success handling
-      setSuccess(`Payment of UGX ${formData.paymentAmount} added successfully!`);
+      setSuccess(t('loanDashboard.paymentForm.success', { 
+        currency: t('loanDashboard.paymentForm.currency'), 
+        amount: formData.paymentAmount 
+      }));
       setFormData({ loanId: '', paymentAmount: '' });
       
       // Refresh loan data
       refetchLoans();
       
     } catch (err: any) {
-      setError(err.message || 'An error occurred while submitting the payment');
+      setError(err.message || t('loanDashboard.paymentForm.errors.genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +71,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
   return (
     <div className="bg-white rounded-lg shadow-sm sticky top-8">
       <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800">Add New Payment</h2>
+        <h2 className="text-xl font-semibold text-gray-800">{t('loanDashboard.paymentForm.title')}</h2>
       </div>
       
       {error && (
@@ -84,7 +89,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
       <form onSubmit={submitPayment} className="px-6 py-4 space-y-6">
         <div>
           <label htmlFor="loanId" className="block text-sm font-medium text-gray-700">
-            Loan ID
+            {t('loanDashboard.paymentForm.fields.loanId')}
           </label>
           <div className="mt-1">
             <input
@@ -93,7 +98,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
               value={formData.loanId}
               onChange={(e) => setFormData({ ...formData, loanId: e.target.value })}
               className="w-full p-2 border rounded"
-              placeholder="Enter Loan ID"
+              placeholder={t('loanDashboard.paymentForm.fields.loanIdPlaceholder')}
               disabled={isLoading}
             />
           </div>
@@ -101,11 +106,11 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
 
         <div>
           <label htmlFor="paymentAmount" className="block text-sm font-medium text-gray-700">
-            Payment Amount
+            {t('loanDashboard.paymentForm.fields.amount')}
           </label>
           <div className="mt-1 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500">UGX</span>
+              <span className="text-gray-500">{t('loanDashboard.paymentForm.currency')}</span>
             </div>
             <input
               type="number"
@@ -113,7 +118,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
               value={formData.paymentAmount}
               onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
               className="w-full p-2 pl-12 border rounded"
-              placeholder="0.00"
+              placeholder={t('loanDashboard.paymentForm.fields.amountPlaceholder')}
               min="0"
               step="0.01"
               disabled={isLoading}
@@ -133,9 +138,9 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Processing...
+                {t('loanDashboard.paymentForm.processing')}
               </>
-            ) : 'Add Payment'}
+            ) : t('loanDashboard.paymentForm.submit')}
           </button>
         </div>
       </form>

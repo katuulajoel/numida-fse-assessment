@@ -2,9 +2,11 @@ import './App.css'
 import React, { useState, useEffect } from 'react'
 import AddNewPayment from './components/AddNewPayment'
 import LoanList from './components/LoanList'
+import LanguageSwitcher from './components/LanguageSwitcher'
 // Import the logo from assets
 import numidaLogo from './assets/logo.numida.png'
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
+import { useTranslation } from './i18n/useTranslation';
 
 // GraphQL client setup
 const client = new ApolloClient({
@@ -84,6 +86,7 @@ const formatDate = (dateString: string | null | undefined): string | undefined =
 };
 
 function LoanApp() {
+  const { t } = useTranslation();
   const { loading, error, data, refetch } = useQuery(GET_LOANS_AND_PAYMENTS);
   const [loans, setLoans] = useState<Loan[]>([]);
   const [formData, setFormData] = useState({
@@ -155,8 +158,11 @@ function LoanApp() {
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="w-full mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Loan Payment Dashboard</h1>
-          <img src={numidaLogo} alt="Numida Logo" className="h-10" />
+          <h1 className="text-3xl font-bold text-gray-900">{t('loanDashboard.title')}</h1>
+          <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
+            <img src={numidaLogo} alt="Numida Logo" className="h-10" />
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
