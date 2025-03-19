@@ -1,6 +1,6 @@
 import datetime
 
-# In a real application, this would be replaced with a database
+# NOTE: In a real application, this would be replaced with a database
 loans = [
     {
         "id": 1,

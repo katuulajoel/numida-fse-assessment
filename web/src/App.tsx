@@ -8,6 +8,8 @@ import numidaLogo from './assets/logo.numida.png'
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { useTranslation } from './i18n/useTranslation';
 import env from './config/env';
+// Import utility functions
+import { calculateLoanStatus, formatDate, LoanStatus } from './utils/loanUtils';
 
 // GraphQL client setup
 const client = new ApolloClient({
@@ -33,8 +35,6 @@ const GET_LOANS_AND_PAYMENTS = gql`
 `;
 
 // Types
-type LoanStatus = 'On Time' | 'Late' | 'Defaulted' | 'Unpaid'
-
 interface Payment {
   id: number;
   payment_date: string;
@@ -58,33 +58,6 @@ interface Loan {
   paymentDate?: string
   status: LoanStatus
 }
-
-// Function to determine loan status based on due date and payment date
-const calculateLoanStatus = (dueDate: string, paymentDate?: string): LoanStatus => {
-  if (!paymentDate) return 'Unpaid';
-  
-  const due = new Date(dueDate);
-  const payment = new Date(paymentDate);
-  const diffDays = Math.floor((payment.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
-  
-  if (diffDays <= 5) return 'On Time';
-  if (diffDays <= 30) return 'Late';
-  return 'Defaulted';
-};
-
-// Function to safely format dates
-const formatDate = (dateString: string | null | undefined): string | undefined => {
-  if (!dateString) return undefined;
-  try {
-    const date = new Date(dateString);
-    // Check if date is valid
-    if (isNaN(date.getTime())) return undefined;
-    return date.toISOString().split('T')[0];
-  } catch (e) {
-    console.error("Error formatting date:", e);
-    return undefined;
-  }
-};
 
 function LoanApp() {
   const { t } = useTranslation();
@@ -149,7 +122,7 @@ function LoanApp() {
           onClick={() => refetch()} 
           className="mt-2 bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded"
         >
-          Try Again
+          {t('common.tryAgain')}
         </button>
       </div>
     </div>
@@ -162,7 +135,7 @@ function LoanApp() {
           <h1 className="text-3xl font-bold text-gray-900">{t('loanDashboard.title')}</h1>
           <div className="flex items-center space-x-4">
             <LanguageSwitcher />
-            <img src={numidaLogo} alt="Numida Logo" className="h-10" />
+            <img src={numidaLogo} alt="Numida Logo" className="h-10 logo" />
           </div>
         </div>
         

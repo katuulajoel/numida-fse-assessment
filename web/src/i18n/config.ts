@@ -5,6 +5,10 @@ import env from '../config/env';
 
 // English translations
 const enTranslations = {
+  common: {
+    tryAgain: 'Try Again',
+    language: 'Language:'
+  },
   loanDashboard: {
     title: 'Loan Payment Dashboard',
     loanList: {
@@ -49,6 +53,10 @@ const enTranslations = {
 
 // Luganda translations
 const lgTranslations = {
+  common: {
+    tryAgain: 'Gezaako Omulundi Omulala',
+    language: 'Olulimi:'
+  },
   loanDashboard: {
     title: 'Ekitebe ky\'Emisaala y\'Amabanja',
     loanList: {
