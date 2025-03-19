@@ -3,11 +3,10 @@ import React, { useState } from 'react'
 interface AddNewPaymentProps {
   formData: { loanId: string; paymentAmount: string }
   setFormData: React.Dispatch<React.SetStateAction<{ loanId: string; paymentAmount: string }>>
-  handleSubmit: (e: React.FormEvent) => void
   refetchLoans: () => void
 }
 
-const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, handleSubmit, refetchLoans }) => {
+const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, refetchLoans }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
