@@ -22,7 +22,7 @@ This is a python server and requires that you have `python 3.9+` installed on yo
 
 **Description:** This endpoint allows you to query loan products and loan applications using GraphQL.
 
-**Example Query:**
+**Example Queries:**
 
 To get all existing loans:
 
@@ -38,11 +38,25 @@ To get all existing loans:
 }
 ```
 
+To get loan payments:
+
+```graphql
+{
+  payments {
+    id
+    loanId
+    paymentDate
+    amount
+  }
+}
+```
+
 ### REST Endpoints
 
-### Home Endpoint
+#### Home Endpoint
 
 **URL:** `/`
+
 **Method:** `GET`
 
 **Description:** This endpoint returns a welcome message.
@@ -54,3 +68,39 @@ To get all existing loans:
   "message": "Welcome to the Numida API"
 }
 ```
+
+#### Create Payment Endpoint
+
+**URL:** `/api/payments`
+
+**Method:** `POST`
+
+**Description:** This endpoint allows you to create a new payment for an existing loan.
+
+**Request Body:**
+
+```json
+{
+  "loanId": 1,
+  "paymentAmount": 500
+}
+```
+
+**Successful Response (201):**
+
+```json
+{
+  "success": true,
+  "payment": {
+    "id": 4,
+    "loanId": 1,
+    "paymentDate": "2024-04-15",
+    "amount": 500
+  }
+}
+```
+
+**Error Responses:**
+- 400: Missing required fields
+- 404: Loan not found
+- 500: Server error
