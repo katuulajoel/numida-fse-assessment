@@ -50,7 +50,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
       }
       
       // Success handling
-      setSuccess(`Payment of $${formData.paymentAmount} added successfully!`);
+      setSuccess(`Payment of UGX ${formData.paymentAmount} added successfully!`);
       setFormData({ loanId: '', paymentAmount: '' });
       
       // Refresh loan data
@@ -105,14 +105,14 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
           </label>
           <div className="mt-1 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500">$</span>
+              <span className="text-gray-500">UGX</span>
             </div>
             <input
               type="number"
               id="paymentAmount"
               value={formData.paymentAmount}
               onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
-              className="w-full p-2 pl-7 border rounded"
+              className="w-full p-2 pl-12 border rounded"
               placeholder="0.00"
               min="0"
               step="0.01"

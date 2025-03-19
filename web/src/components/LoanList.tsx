@@ -25,6 +25,7 @@ const LoanList: React.FC<LoanListProps> = ({ loans, getStatusColor }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loan ID</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loan Name</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Principal Amount</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Rate</th>
@@ -36,9 +37,10 @@ const LoanList: React.FC<LoanListProps> = ({ loans, getStatusColor }) => {
           <tbody className="bg-white divide-y divide-gray-200">
             {loans.map((loan) => (
               <tr key={loan.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loan.id}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loan.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ${loan.principal.toLocaleString()}
+                  UGX {loan.principal.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {loan.interestRate}%

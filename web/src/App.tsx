@@ -164,7 +164,6 @@ function LoanApp() {
             <AddNewPayment 
               formData={formData} 
               setFormData={setFormData} 
-              handleSubmit={handleSubmit} 
               refetchLoans={refetch}
             />
           </div>
