@@ -52,3 +52,11 @@ export default tseslint.config({
   },
 })
 ```
+
+# Numida Loan Dashboard
+
+## Environment Setup
+
+This project uses environment variables for configuration. Before running the application, you need to set up your environment:
+
+1. Copy the example environment files:

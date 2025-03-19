@@ -7,10 +7,11 @@ import LanguageSwitcher from './components/LanguageSwitcher'
 import numidaLogo from './assets/logo.numida.png'
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { useTranslation } from './i18n/useTranslation';
+import env from './config/env';
 
 // GraphQL client setup
 const client = new ApolloClient({
-  uri: 'http://localhost:2024/graphql',
+  uri: env.graphqlUrl,
   cache: new InMemoryCache()
 });
 

@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.development
+.env.production
+.env.local
+.env.*.local
+
+# Exclude example files from gitignore
+!.env.example
+!.env.*.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

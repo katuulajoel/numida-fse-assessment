@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from '../i18n/useTranslation'
+import env from '../config/env'
 
 interface AddNewPaymentProps {
   formData: { loanId: string; paymentAmount: string }
@@ -34,7 +35,7 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://localhost:2024/api/payments', {
+      const response = await fetch(`${env.apiUrl}/api/payments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

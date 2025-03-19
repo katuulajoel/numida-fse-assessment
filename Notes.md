@@ -29,3 +29,5 @@ And saw that we have `laons` and that `existingLoans` is not A valid fieldname
 move ^ from packages so as to local the dependencies
 
 i need a logo with just the bird and not bird and company name for the favicon 
+
+npm run dev -- --mode production
