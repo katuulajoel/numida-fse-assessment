@@ -44,17 +44,22 @@ For instructions on setting up and running the web application, refer to the [we
 
 ## Code Structure
 - **`server`**: Backend GraphQL API.
+    - **`/app/api`**: Contains API endpoint definitions and logic.
+    - **`/app/graphql`**: Houses GraphQL schema, resolvers, and related logic.
+    - **`/app/models`**: Defines database models and their relationships.
 - **`web`**: Frontend React application.
-  - **`/src/components`**: Reusable UI components.
-  - **`/src/hooks`**: Custom React hooks.
-  - **`/src/i18n`**: Internationalization configuration.
-  - **`/src/utils`**: Utility functions, including loan status calculation.
+    - **`/src/assets`**: Applications static assets like images.
+    - **`/src/components`**: UI components.
+    - **`/src/config`**: Applications global configuration.
+    - **`/src/i18n`**: Internationalization configuration.
+    - **`/src/utils`**: Utility functions, including loan status calculation.
 
 ## Future Improvements
 With additional time, I would consider:
 - Building more advanced filtering and sorting capabilities.
 - Enhancing the UI with additional visualizations.
 - Limit adding payments for loans that have been closed or paid in full
+- Creating a library of reusable UI components (e.g., buttons, selects, form inputs) to ensure consistency across the application and improve maintainability.
 
 ## Contact
 For any questions about this implementation, please contact me at katuula@gmail.com.

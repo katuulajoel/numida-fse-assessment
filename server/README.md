@@ -1,4 +1,4 @@
-![Numida](./logo.numida.png)
+![Numida](../web/src/assets/logo.numida.png)
 
 # SERVER SETUP INSTRUCTIONS
 
