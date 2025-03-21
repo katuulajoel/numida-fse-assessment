@@ -1,18 +1,20 @@
 import './App.css'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, Suspense } from 'react'
 import AddNewPayment from './components/AddNewPayment'
 import LoanList from './components/LoanList'
 import LanguageSwitcher from './components/LanguageSwitcher'
-import LoanDetailsModal from './components/LoanDetailsModal'
-// Import the logo from assets
+// Import logo
 import numidaLogo from './assets/logo.numida.png'
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { useTranslation } from './i18n/useTranslation';
 import env from './config/env';
 // Import utility functions
-import { calculateLoanStatus, formatDate } from './utils/loanUtils';
+import { calculateLoanStatus } from './utils/loanUtils';
 // Import models
-import { Loan, LoanStatus, ApiLoan } from './models/Loan';
+import { Loan, LoanStatus, ApiLoan, ApiPayment } from './models/Loan';
+
+// Use React.lazy for code splitting
+const LoanDetailsModal = React.lazy(() => import('./components/LoanDetailsModal'));
 
 // GraphQL client setup
 const client = new ApolloClient({
@@ -50,7 +52,7 @@ function LoanApp() {
 
   useEffect(() => {
     if (data?.loans) {
-      const processedLoans: Loan[] = data.loans.map((loan: any) => {
+      const processedLoans: Loan[] = data.loans.map((loan: ApiLoan) => {
         let paymentDate;
         if (loan.payments && loan.payments.length > 0) {
           paymentDate = loan.payments[0].paymentDate;
@@ -59,7 +61,7 @@ function LoanApp() {
         const dueDate = loan.dueDate || '';
         
         // Process payments if they exist
-        const payments = loan.payments?.map((payment: any) => ({
+        const payments = loan.payments?.map((payment: ApiPayment) => ({
           id: String(payment.id),
           amount: payment.amount || 0,
           date: payment.paymentDate || '',
@@ -96,18 +98,13 @@ function LoanApp() {
     return colors[status];
   };
 
-  const handleLoanSelect = (loan: Loan) => {
+  const handleLoanSelect = useCallback((loan: Loan) => {
     setSelectedLoan(loan);
-  };
+  }, []);
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setSelectedLoan(null);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setFormData({ loanId: '', paymentAmount: '' })
-  }
+  }, []);
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen">
@@ -159,11 +156,17 @@ function LoanApp() {
         </div>
 
         {selectedLoan && (
-          <LoanDetailsModal
-            loan={selectedLoan}
-            onClose={handleModalClose}
-            getStatusColor={getStatusColor}
-          />
+          <Suspense fallback={
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+            </div>
+          }>
+            <LoanDetailsModal
+              loan={selectedLoan}
+              onClose={handleModalClose}
+              getStatusColor={getStatusColor}
+            />
+          </Suspense>
         )}
       </div>
     </div>
