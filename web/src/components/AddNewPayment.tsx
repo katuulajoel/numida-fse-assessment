@@ -62,8 +62,12 @@ const AddNewPayment: React.FC<AddNewPaymentProps> = ({ formData, setFormData, re
       // Refresh loan data
       refetchLoans();
       
-    } catch (err: any) {
-      setError(err.message || t('loanDashboard.paymentForm.errors.genericError'));
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || t('loanDashboard.paymentForm.errors.genericError'));
+      } else {
+        setError(t('loanDashboard.paymentForm.errors.genericError'));
+      }
     } finally {
       setIsLoading(false);
     }

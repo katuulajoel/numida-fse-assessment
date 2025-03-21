@@ -33,9 +33,22 @@ loans = [
 ]
 
 loan_payments = [
-    {"id": 1, "loan_id": 1, "payment_date": datetime.date(2024, 3, 4), "amount": 2000},
-    {"id": 2, "loan_id": 2, "payment_date": datetime.date(2024, 3, 15), "amount": 5000},
-    {"id": 3, "loan_id": 3, "payment_date": datetime.date(2024, 4, 5), "amount": 3500},
+    # Loan 1: Total payments = 10,500 (principal + interest = 10,500)
+    {"id": 1, "loan_id": 1, "payment_date": datetime.date(2025, 2, 19), "amount": 2000},
+    {"id": 2, "loan_id": 1, "payment_date": datetime.date(2025, 3, 4), "amount": 8500},
+
+    # Loan 2: Total payments = 517,500 (principal + interest = 517,500)
+    {"id": 3, "loan_id": 2, "payment_date": datetime.date(2025, 3, 15), "amount": 200000},
+    {"id": 4, "loan_id": 2, "payment_date": datetime.date(2025, 3, 20), "amount": 150000},
+    {"id": 5, "loan_id": 2, "payment_date": datetime.date(2025, 3, 25), "amount": 100000},
+    {"id": 6, "loan_id": 2, "payment_date": datetime.date(2025, 3, 30), "amount": 67500},
+
+    # Loan 3: Total payments = 31,350 (principal + interest = 31,350)
+    {"id": 7, "loan_id": 3, "payment_date": datetime.date(2025, 4, 5), "amount": 15000},
+    {"id": 8, "loan_id": 3, "payment_date": datetime.date(2025, 4, 10), "amount": 16350},
+
+    # Loan 4: No payments (Unpaid)
+    # No entries for loan_id 4
 ]
 
 def get_loans():

@@ -53,20 +53,21 @@ function LoanApp() {
   useEffect(() => {
     if (data?.loans) {
       const processedLoans: Loan[] = data.loans.map((loan: ApiLoan) => {
-        let paymentDate;
-        if (loan.payments && loan.payments.length > 0) {
-          paymentDate = loan.payments[0].paymentDate;
-        }
-        
-        const dueDate = loan.dueDate || '';
-        
-        // Process payments if they exist
+        // Determine the most recent payment date
         const payments = loan.payments?.map((payment: ApiPayment) => ({
           id: String(payment.id),
           amount: payment.amount || 0,
           date: payment.paymentDate || '',
         })) || [];
         
+        const paymentDate = payments.length > 0 
+          ? payments.reduce((latest, payment) => 
+              new Date(payment.date) > new Date(latest.date) ? payment : latest
+            ).date
+          : undefined;
+
+        const dueDate = loan.dueDate || '';
+
         return {
           id: String(loan.id),
           name: loan.name,
