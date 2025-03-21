@@ -3,13 +3,16 @@ import React, { useState, useEffect } from 'react'
 import AddNewPayment from './components/AddNewPayment'
 import LoanList from './components/LoanList'
 import LanguageSwitcher from './components/LanguageSwitcher'
+import LoanDetailsModal from './components/LoanDetailsModal'
 // Import the logo from assets
 import numidaLogo from './assets/logo.numida.png'
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { useTranslation } from './i18n/useTranslation';
 import env from './config/env';
 // Import utility functions
-import { calculateLoanStatus, formatDate, LoanStatus } from './utils/loanUtils';
+import { calculateLoanStatus, formatDate } from './utils/loanUtils';
+// Import models
+import { Loan, LoanStatus, ApiLoan } from './models/Loan';
 
 // GraphQL client setup
 const client = new ApolloClient({
@@ -29,40 +32,17 @@ const GET_LOANS_AND_PAYMENTS = gql`
       payments {
         id
         paymentDate
+        amount
       }
     }
   }
 `;
 
-// Types
-interface Payment {
-  id: number;
-  payment_date: string;
-}
-
-interface LoanData {
-  id: number;
-  name: string;
-  interest_rate: number;
-  principal: number;
-  due_date: string;
-  payments: Payment[];
-}
-
-interface Loan {
-  id: string
-  name: string
-  principal: number
-  interestRate: number
-  dueDate: string
-  paymentDate?: string
-  status: LoanStatus
-}
-
 function LoanApp() {
   const { t } = useTranslation();
   const { loading, error, data, refetch } = useQuery(GET_LOANS_AND_PAYMENTS);
   const [loans, setLoans] = useState<Loan[]>([]);
+  const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
   const [formData, setFormData] = useState({
     loanId: '',
     paymentAmount: '',
@@ -78,6 +58,13 @@ function LoanApp() {
         
         const dueDate = loan.dueDate || '';
         
+        // Process payments if they exist
+        const payments = loan.payments?.map((payment: any) => ({
+          id: String(payment.id),
+          amount: payment.amount || 0,
+          date: payment.paymentDate || '',
+        })) || [];
+        
         return {
           id: String(loan.id),
           name: loan.name,
@@ -85,7 +72,14 @@ function LoanApp() {
           interestRate: loan.interestRate,
           dueDate,
           paymentDate,
-          status: calculateLoanStatus(dueDate, paymentDate)
+          status: calculateLoanStatus(
+            dueDate, 
+            paymentDate, 
+            loan.principal, 
+            loan.interestRate, 
+            payments
+          ),
+          payments: payments
         };
       });
       setLoans(processedLoans);
@@ -100,6 +94,14 @@ function LoanApp() {
       'Unpaid': 'text-gray-600 bg-gray-50',
     };
     return colors[status];
+  };
+
+  const handleLoanSelect = (loan: Loan) => {
+    setSelectedLoan(loan);
+  };
+
+  const handleModalClose = () => {
+    setSelectedLoan(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -148,9 +150,21 @@ function LoanApp() {
             />
           </div>
           <div className="lg:col-span-2">
-            <LoanList loans={loans} getStatusColor={getStatusColor} />
+            <LoanList 
+              loans={loans} 
+              getStatusColor={getStatusColor} 
+              onLoanSelect={handleLoanSelect}
+            />
           </div>
         </div>
+
+        {selectedLoan && (
+          <LoanDetailsModal
+            loan={selectedLoan}
+            onClose={handleModalClose}
+            getStatusColor={getStatusColor}
+          />
+        )}
       </div>
     </div>
   )

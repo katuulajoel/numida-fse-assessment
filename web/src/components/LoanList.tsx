@@ -1,22 +1,14 @@
 import React from 'react'
 import { useTranslation } from '../i18n/useTranslation'
-
-interface Loan {
-  id: string
-  name: string
-  principal: number
-  interestRate: number
-  dueDate: string
-  paymentDate?: string
-  status: 'On Time' | 'Late' | 'Defaulted' | 'Unpaid'
-}
+import { Loan } from '../models/Loan'
 
 interface LoanListProps {
   loans: Loan[]
   getStatusColor: (status: Loan['status']) => string
+  onLoanSelect: (loan: Loan) => void
 }
 
-const LoanList: React.FC<LoanListProps> = ({ loans, getStatusColor }) => {
+const LoanList: React.FC<LoanListProps> = ({ loans, getStatusColor, onLoanSelect }) => {
   const { t } = useTranslation();
   
   return (
@@ -53,7 +45,11 @@ const LoanList: React.FC<LoanListProps> = ({ loans, getStatusColor }) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {loans.map((loan) => (
-              <tr key={loan.id}>
+              <tr 
+                key={loan.id} 
+                onClick={() => onLoanSelect(loan)}
+                className="cursor-pointer hover:bg-gray-50 transition-colors duration-150"
+              >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loan.id}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loan.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

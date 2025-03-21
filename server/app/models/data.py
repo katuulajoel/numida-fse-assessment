@@ -33,9 +33,9 @@ loans = [
 ]
 
 loan_payments = [
-    {"id": 1, "loan_id": 1, "payment_date": datetime.date(2024, 3, 4)},
-    {"id": 2, "loan_id": 2, "payment_date": datetime.date(2024, 3, 15)},
-    {"id": 3, "loan_id": 3, "payment_date": datetime.date(2024, 4, 5)},
+    {"id": 1, "loan_id": 1, "payment_date": datetime.date(2024, 3, 4), "amount": 2000},
+    {"id": 2, "loan_id": 2, "payment_date": datetime.date(2024, 3, 15), "amount": 5000},
+    {"id": 3, "loan_id": 3, "payment_date": datetime.date(2024, 4, 5), "amount": 3500},
 ]
 
 def get_loans():

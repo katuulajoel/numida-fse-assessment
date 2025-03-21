@@ -5,6 +5,7 @@ class LoanPayment(graphene.ObjectType):
     id = graphene.Int()
     loan_id = graphene.Int()
     payment_date = graphene.Date()
+    amount = graphene.Float()
 
 class ExistingLoans(graphene.ObjectType):
     id = graphene.Int()
@@ -19,7 +20,8 @@ class ExistingLoans(graphene.ObjectType):
         return [LoanPayment(
             id=payment["id"],
             loan_id=payment["loan_id"],
-            payment_date=payment["payment_date"]
+            payment_date=payment["payment_date"],
+            amount=payment.get("amount", 0)
         ) for payment in matching_payments]
 
 class Query(graphene.ObjectType):

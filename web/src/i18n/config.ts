@@ -47,6 +47,20 @@ const enTranslations = {
         invalidAmount: 'Please enter a valid payment amount',
         genericError: 'An error occurred while submitting the payment'
       }
+    },
+    loanDetails: {
+      title: 'Loan Details',
+      principal: 'Principal Amount',
+      interestRate: 'Interest Rate',
+      dueDate: 'Due Date',
+      status: 'Status',
+      description: 'Description',
+      paymentHistory: 'Payment History',
+      noPayments: 'No payments have been recorded for this loan.',
+      paymentSummary: 'Payment Summary',
+      totalDue: 'Total Amount Due',
+      totalPaid: 'Total Amount Paid',
+      remainingAmount: 'Remaining Amount'
     }
   }
 };
@@ -95,6 +109,20 @@ const lgTranslations = {
         invalidAmount: 'Yingiza omuwendo omutuufu ogw\'okusasula',
         genericError: 'Waliwo kizibu mu kusasula'
       }
+    },
+    loanDetails: {
+      title: 'Ebikwata ku Bbanja',
+      principal: 'Omuwendo gw\'Ensimbi',
+      interestRate: 'Ekivaamu ku buli 100',
+      dueDate: 'Ennaku y\'Okusasula',
+      status: 'Embeera',
+      description: 'Okunnyonnyola',
+      paymentHistory: 'Ebyafaayo by\'Okusasula',
+      noPayments: 'Tewali kusasula kwawandiikibwa ku bbanja lino.',
+      paymentSummary: 'Okufunza Okusasula',
+      totalDue: 'Ensimbi Zonna Ezeetaagibwa',
+      totalPaid: 'Ensimbi Zonna Ezisasuddwa',
+      remainingAmount: 'Ensimbi Ezisigaddeyo'
     }
   }
 };
