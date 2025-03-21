@@ -6,6 +6,29 @@ import React from 'react';
 // Mock fetch
 global.fetch = jest.fn();
 
+// Mock useTranslation
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'loanDashboard.paymentForm.title': 'Add New Payment',
+        'loanDashboard.paymentForm.fields.loanId': 'Loan ID',
+        'loanDashboard.paymentForm.fields.amount': 'Payment Amount',
+        'loanDashboard.paymentForm.submit': 'Add Payment',
+        'loanDashboard.paymentForm.fields.loanIdPlaceholder': 'Enter Loan ID',
+        'loanDashboard.paymentForm.fields.amountPlaceholder': '0.00',
+        'loanDashboard.paymentForm.errors.loanIdRequired': 'Loan ID is required',
+        'loanDashboard.paymentForm.errors.invalidAmount': 'Please enter a valid payment amount',
+      };
+      return translations[key] || key;
+    },
+    i18n: {
+      changeLanguage: jest.fn(),
+      language: 'en',
+    },
+  }),
+}));
+
 describe('AddNewPayment Component', () => {
   const mockRefetchLoans = jest.fn();
   

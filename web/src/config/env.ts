@@ -4,22 +4,15 @@
  */
 
 export const env = {
-  // General
-  NODE_ENV: import.meta.env.MODE || 'development',
-  isDevelopment: import.meta.env.DEV,
-  isProduction: import.meta.env.PROD,
-  
-  // Application
-  appTitle: import.meta.env.VITE_APP_TITLE as string,
-  
-  // API
-  apiUrl: import.meta.env.VITE_API_URL as string,
-  graphqlUrl: import.meta.env.VITE_GRAPHQL_URL as string,
-  
-  // Return variable with fallback
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  isDevelopment: process.env.NODE_ENV === 'development',
+  isProduction: process.env.NODE_ENV === 'production',
+  appTitle: process.env.VITE_APP_TITLE || 'Default App Title',
+  apiUrl: process.env.VITE_API_URL || 'http://localhost:3000',
+  graphqlUrl: process.env.VITE_GRAPHQL_URL || 'http://localhost:4000/graphql',
   get: (key: string, fallback: string = ''): string => {
-    return (import.meta.env[`VITE_${key}`] as string) || fallback;
-  }
+    return process.env[`VITE_${key}`] || fallback;
+  },
 };
 
 export default env;

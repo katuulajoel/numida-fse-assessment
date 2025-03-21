@@ -1,5 +1,4 @@
-// Types
-export type LoanStatus = 'On Time' | 'Late' | 'Defaulted' | 'Unpaid';
+import { LoanStatus } from '../models/Loan';
 
 /**
  * Determines loan status based on due date, payment date, and payment amounts
@@ -22,26 +21,19 @@ export const calculateLoanStatus = (
   
   // Check if payment is sufficient
   if (principal && interestRate !== undefined && payments && payments.length > 0) {
-    // Calculate total amount due with interest
     const totalDue = principal * (1 + interestRate / 100);
-    
-    // Calculate total amount paid
     const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
     
     // If total paid is less than total due, the loan is still unpaid
     if (totalPaid < totalDue) return 'Unpaid';
   }
   
-  // Time-based status determination
   const due = new Date(dueDate);
   const payment = new Date(paymentDate);
   
-  // Calculate difference in days - IMPORTANT: This logic was reversed!
   // For late payments, the payment date should be AFTER the due date
   const diffDays = Math.floor((due.getTime() - payment.getTime()) / (1000 * 60 * 60 * 24));
-  
-  // Tests expect: Payment after due date = late or defaulted
-  // So we need to check for negative diffDays
+
   if (diffDays >= 0) return 'On Time'; // Payment before or on due date
   
   const absDiffDays = Math.abs(diffDays);
