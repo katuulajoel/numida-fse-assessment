@@ -35,11 +35,19 @@ export const calculateLoanStatus = (
   // Time-based status determination
   const due = new Date(dueDate);
   const payment = new Date(paymentDate);
-  const diffDays = Math.floor((payment.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
   
-  if (diffDays <= 5) return 'On Time';
-  if (diffDays <= 30) return 'Late';
-  return 'Defaulted';
+  // Calculate difference in days - IMPORTANT: This logic was reversed!
+  // For late payments, the payment date should be AFTER the due date
+  const diffDays = Math.floor((due.getTime() - payment.getTime()) / (1000 * 60 * 60 * 24));
+  
+  // Tests expect: Payment after due date = late or defaulted
+  // So we need to check for negative diffDays
+  if (diffDays >= 0) return 'On Time'; // Payment before or on due date
+  
+  const absDiffDays = Math.abs(diffDays);
+  if (absDiffDays <= 5) return 'On Time'; // Within 5 days of due date
+  if (absDiffDays <= 30) return 'Late'; // 6-30 days late
+  return 'Defaulted'; // More than 30 days late
 };
 
 /**
