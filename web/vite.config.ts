@@ -8,12 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      'process.env': {
-        NODE_ENV: env.NODE_ENV,
-        VITE_APP_TITLE: env.VITE_APP_TITLE,
-        VITE_API_URL: env.VITE_API_URL,
-        VITE_GRAPHQL_URL: env.VITE_GRAPHQL_URL,
-      },
+      'process.env': { ...env },
     },
   };
 });
